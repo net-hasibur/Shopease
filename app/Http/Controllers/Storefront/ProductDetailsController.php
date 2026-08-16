@@ -1,0 +1,209 @@
+<?php
+
+namespace App\Http\Controllers\Storefront;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Review;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+
+class ProductDetailsController extends Controller
+{
+    /**
+     * Display product details.
+     */
+    public function show(Request $request, string $slug): Response
+    {
+        /** @var Product|null $product */
+        $product = Product::with([
+            'images' => fn ($q) => $q->orderBy('sort_order'),
+            'reviews' => fn ($q) => $q->where('is_approved', true)->with('user:id,name')->latest(),
+            'category:id,name,slug',
+        ])
+            ->withCount(['reviews' => fn ($q) => $q->where('is_approved', true)])
+            ->withAvg(['reviews' => fn ($q) => $q->where('is_approved', true)], 'rating')
+            ->where('is_active', true)
+            ->where('slug', $slug)
+            ->first();
+
+        if (! $product) {
+            abort(HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        // Build rating breakdown (percentage per star 1–5)
+        $totalReviews = $product->reviews_count ?: 0;
+        $breakdown = collect(range(5, 1))->map(function (int $star) use ($product, $totalReviews) {
+            $count = $product->reviews->where('rating', $star)->count();
+
+            return [
+                's' => $star,
+                'p' => $totalReviews > 0 ? (int) round(($count / $totalReviews) * 100) : 0,
+            ];
+        })->values();
+
+        // Shape reviews for the frontend
+        $reviews = $product->reviews->map(fn ($r) => [
+            'id' => $r->id,
+            'userId' => $r->user_id,
+            'name' => $r->user?->name ?? 'Anonymous',
+            'rating' => $r->rating,
+            'date' => $r->created_at->format('j M Y'),
+            'verified' => $r->order_id !== null,
+            'text' => $r->comment ?? '',
+        ]);
+
+        // Check for existing review from current user
+        $user = $request->user();
+        $userReview = null;
+        if ($user) {
+            $existing = Review::where('user_id', $user->id)
+                ->where('product_id', $product->id)
+                ->first();
+            if ($existing) {
+                $userReview = [
+                    'id' => $existing->id,
+                    'rating' => $existing->rating,
+                    'comment' => $existing->comment ?? '',
+                ];
+            }
+        }
+
+        // Shape images
+        $images = $product->images->map(fn ($img) => [
+            'path' => $img->image_path,
+            'alt' => $img->alt_text ?? $product->name,
+            'isPrimary' => $img->is_primary,
+        ])->values();
+
+        // Related products from same category (excluding current)
+        $relatedProducts = Product::with(['images' => fn ($q) => $q->where('is_primary', true)])
+            ->withCount(['reviews' => fn ($q) => $q->where('is_approved', true)])
+            ->withAvg(['reviews' => fn ($q) => $q->where('is_approved', true)], 'rating')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get()
+            ->map(fn (Product $p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'slug' => $p->slug,
+                'price' => (float) $p->price,
+                'oldPrice' => $p->compare_at_price !== null ? (float) $p->compare_at_price : null,
+                'img' => $p->images->first()?->image_path ?? '',
+                'rating' => round((float) ($p->reviews_avg_rating ?? 0), 1),
+                'reviews' => (int) ($p->reviews_count ?? 0),
+                'inStock' => $p->stock_status === 'in_stock',
+                'tag' => $p->is_best_seller ? 'Best Seller' : ($p->is_featured ? 'Featured' : null),
+            ]);
+
+        return Inertia::render('shop/ProductDetails', [
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'shortDescription' => $product->short_description,
+                'description' => $product->description,
+                'price' => (float) $product->price,
+                'oldPrice' => $product->compare_at_price !== null ? (float) $product->compare_at_price : null,
+                'rating' => round((float) ($product->reviews_avg_rating ?? 0), 1),
+                'reviewCount' => $totalReviews,
+                'inStock' => $product->stock_status === 'in_stock',
+                'category' => $product->category?->name ?? '',
+                'categorySlug' => $product->category?->slug ?? '',
+                'images' => $images,
+            ],
+            'reviews' => $reviews,
+            'userReview' => $userReview,
+            'breakdown' => $breakdown,
+            'relatedProducts' => $relatedProducts,
+        ]);
+    }
+
+    /**
+     * Store or update a review.
+     */
+    public function storeReview(Request $request, string $slug): RedirectResponse
+    {
+        /** @var Product $product */
+        $product = Product::where('slug', $slug)->firstOrFail();
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|max:1000',
+            'name' => 'nullable|string|max:100',
+        ]);
+
+        $user = $request->user();
+
+        if ($user) {
+            if (! empty($validated['name']) && $validated['name'] !== $user->name) {
+                $user->update(['name' => $validated['name']]);
+            }
+        }
+
+        Review::create([
+            'product_id' => $product->id,
+            'user_id' => $user ? $user->id : null,
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'],
+            'is_approved' => true,
+            'approved_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Thank you! Your review has been submitted.');
+    }
+
+    /**
+     * Update an existing review.
+     */
+    public function updateReview(Request $request, string $slug, int $reviewId): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            abort(HttpResponse::HTTP_FORBIDDEN);
+        }
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        $review = Review::where('id', $reviewId)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $review->update([
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'],
+        ]);
+
+        return redirect()->back()->with('success', 'Review updated successfully!');
+    }
+
+    /**
+     * Delete a user's review.
+     */
+    public function destroyReview(Request $request, string $slug, int $reviewId): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            abort(HttpResponse::HTTP_FORBIDDEN);
+        }
+
+        $review = Review::where('id', $reviewId)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $review->delete();
+
+        return redirect()->back()->with('success', 'Your review has been deleted.');
+    }
+}
