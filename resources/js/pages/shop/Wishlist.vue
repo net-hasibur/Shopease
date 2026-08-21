@@ -1,4 +1,4 @@
-<script setup lang="ts">
+e<script setup lang="ts">
 import { onMounted } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useCart } from '@/composables/useCart';
@@ -97,7 +97,7 @@ const handleClear = () => {
                         </h1>
                         <p class="mt-3 text-gray-600 text-lg">Save your favorite items for later</p>
                     </div>
-                    
+
                     <div v-if="wishlist.length > 0" class="flex items-center gap-4">
                         <span class="px-4 py-2 bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700 rounded-full text-sm font-semibold shadow-sm">
                             {{ wishlist.length }} {{ wishlist.length === 1 ? 'Item' : 'Items' }}
@@ -250,7 +250,7 @@ const handleClear = () => {
                 <div class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-red-50 opacity-50"></div>
                 <div class="absolute top-0 right-0 h-64 w-64 bg-primary-100 rounded-full filter blur-3xl opacity-20"></div>
                 <div class="absolute bottom-0 left-0 h-64 w-64 bg-red-100 rounded-full filter blur-3xl opacity-20"></div>
-                
+
                 <div class="relative">
                     <div class="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-red-50 to-red-100 shadow-lg">
                         <svg class="h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
