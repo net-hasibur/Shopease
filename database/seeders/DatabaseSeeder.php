@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Seed Users
+        // 1. Seed Users - More users added
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@shopease.com',
@@ -52,11 +52,11 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        // Create 10 other random users
-        $users = User::factory(10)->create();
-        $allUsers = collect([$customer])->concat($users);
+        // Create 50 random users instead of 10
+        $users = User::factory(50)->create();
+        $allUsers = collect([$customer, $superAdmin, $admin])->concat($users);
 
-        // 2. Seed Hero Slides
+        // 2. Seed Hero Slides - Added more slides
         $slides = [
             [
                 'image' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1920&q=70',
@@ -76,13 +76,25 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 3,
                 'is_active' => true,
             ],
+            [
+                'image' => 'https://images.unsplash.com/photo-1483985988355-66a78b4f5bb1?auto=format&fit=crop&w=1920&q=70',
+                'link' => '/shop?category=fashion',
+                'sort_order' => 4,
+                'is_active' => true,
+            ],
+            [
+                'image' => 'https://images.unsplash.com/photo-1534126511673-b6899657816a?auto=format&fit=crop&w=1920&q=70',
+                'link' => '/shop?category=electronics',
+                'sort_order' => 5,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($slides as $slide) {
             HeroSlide::create($slide);
         }
 
-        // 3. Seed Categories
+        // 3. Seed Categories - Added more categories
         $categoriesData = [
             [
                 'name' => 'Electronics',
@@ -132,6 +144,38 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 6,
                 'is_active' => true,
             ],
+            [
+                'name' => 'Gadgets',
+                'slug' => 'gadgets',
+                'image' => 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=400&q=70',
+                'description' => 'Cool gadgets and accessories for tech enthusiasts.',
+                'sort_order' => 7,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Food & Beverages',
+                'slug' => 'food-beverages',
+                'image' => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=70',
+                'description' => 'Delicious foods, snacks, and beverages.',
+                'sort_order' => 8,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Toys & Games',
+                'slug' => 'toys-games',
+                'image' => 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=400&q=70',
+                'description' => 'Fun toys and games for all ages.',
+                'sort_order' => 9,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Health & Wellness',
+                'slug' => 'health-wellness',
+                'image' => 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=70',
+                'description' => 'Products for a healthy lifestyle and wellness.',
+                'sort_order' => 10,
+                'is_active' => true,
+            ],
         ];
 
         $categories = [];
@@ -139,15 +183,16 @@ class DatabaseSeeder extends Seeder
             $categories[$catData['name']] = Category::create($catData);
         }
 
-        // 4. Seed Products matching Vue frontend catalogue
+        // 4. Seed Products - Added more products
         $productsData = [
+            // Existing products (kept as is)
             [
                 'id' => 14,
                 'category_name' => 'Electronics',
                 'name' => 'Wireless Noise-Cancelling Headphones',
                 'slug' => 'wireless-noise-cancelling-headphones',
                 'short_description' => 'Premium wireless noise-cancelling headphones with up to 40 hours of battery life.',
-                'description' => 'The ShopEase Wireless Noise-Cancelling Headphones are engineered for listeners who refuse to compromise. Advanced hybrid active noise cancellation silences the world around you, while custom 40mm drivers deliver deep, balanced sound across every genre. Designed for all-day comfort, the breathable memory-foam ear cushions and lightweight headband let you wear them from your morning commute to late-night sessions.',
+                'description' => 'The ShopEase Wireless Noise-Cancelling Headphones are engineered for listeners who refuse to compromise. Advanced hybrid active noise cancellation silences the world around you, while custom 40mm drivers deliver deep, balanced sound across every genre.',
                 'price' => 6499.00,
                 'compare_at_price' => 8999.00,
                 'stock_status' => 'in_stock',
@@ -371,6 +416,183 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 470,
                 'images' => ['photo-1602143407151-7111542de6e8'],
             ],
+            // New Products
+            [
+                'id' => 15,
+                'category_name' => 'Gadgets',
+                'name' => 'Wireless Charging Pad 15W',
+                'slug' => 'wireless-charging-pad-15w',
+                'short_description' => 'Fast 15W Qi-compatible wireless charging pad for all devices.',
+                'description' => 'Universal wireless charger with 15W fast charging capability. Compatible with iPhone, Samsung, and all Qi-enabled devices. LED indicator and anti-slip design.',
+                'price' => 1299.00,
+                'compare_at_price' => 1799.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => true,
+                'is_featured' => true,
+                'is_active' => true,
+                'sold_count' => 530,
+                'images' => ['photo-1586810724476-c294fb7ac01b', 'photo-1610792515862-4be0a1febd95'],
+            ],
+            [
+                'id' => 16,
+                'category_name' => 'Gadgets',
+                'name' => 'Smartphone Camera Lens Kit',
+                'slug' => 'smartphone-camera-lens-kit',
+                'short_description' => '3-in-1 smartphone lens kit with macro, wide-angle, and fisheye.',
+                'description' => 'Transform your smartphone photography with this professional lens kit. Includes 12x macro lens, 120° wide-angle, and 185° fisheye lens. Premium aluminum alloy construction.',
+                'price' => 999.00,
+                'compare_at_price' => 1599.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => true,
+                'is_active' => true,
+                'sold_count' => 280,
+                'images' => ['photo-1596178060671-7a80dc8059ea'],
+            ],
+            [
+                'id' => 17,
+                'category_name' => 'Food & Beverages',
+                'name' => 'Organic Matcha Green Tea 100g',
+                'slug' => 'organic-matcha-green-tea-100g',
+                'short_description' => 'Premium organic matcha green tea powder from Japan.',
+                'description' => 'High-quality ceremonial grade matcha from the Uji region of Japan. Rich in antioxidants, L-theanine, and natural caffeine. Perfect for tea ceremonies or smoothies.',
+                'price' => 749.00,
+                'compare_at_price' => null,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => true,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 410,
+                'images' => ['photo-1592301446407-d8e4a8f87cb9'],
+            ],
+            [
+                'id' => 18,
+                'category_name' => 'Food & Beverages',
+                'name' => 'Premium Assorted Chocolate Box',
+                'slug' => 'premium-assorted-chocolate-box',
+                'short_description' => 'Luxurious assortment of handcrafted Belgian chocolates.',
+                'description' => 'Elegant gift box featuring 36 pieces of artisanal Belgian chocolate. Includes dark, milk, and white chocolate varieties with gourmet fillings. Perfect for gifting.',
+                'price' => 1899.00,
+                'compare_at_price' => 2499.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => true,
+                'is_active' => true,
+                'sold_count' => 350,
+                'images' => ['photo-1549007953-2b2d07c232f5'],
+            ],
+            [
+                'id' => 19,
+                'category_name' => 'Toys & Games',
+                'name' => 'Building Blocks 1500 Pcs',
+                'slug' => 'building-blocks-1500-pcs',
+                'short_description' => 'Massive creative building block set with storage case.',
+                'description' => 'This versatile building block set includes 1500 pieces in various colors and sizes. Includes instruction book to build 20+ different models. Develops creativity and problem-solving skills.',
+                'price' => 3499.00,
+                'compare_at_price' => 4999.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => true,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 290,
+                'images' => ['photo-1558060370-d6443f2b4d36', 'photo-1587654780291-39c9404d746b'],
+            ],
+            [
+                'id' => 20,
+                'category_name' => 'Toys & Games',
+                'name' => 'Remote Control Drone 4K',
+                'slug' => 'remote-control-drone-4k',
+                'short_description' => '4K camera drone with GPS, altitude hold, and 20min flight time.',
+                'description' => 'Professional-grade drone with 4K ultra HD camera, GPS positioning, brushless motors, and one-key return. Perfect for aerial photography and beginners.',
+                'price' => 8999.00,
+                'compare_at_price' => 11999.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => true,
+                'is_active' => true,
+                'sold_count' => 180,
+                'images' => ['photo-1507582020474-9a35b7d455d9', 'photo-1524143986875-3b098d78b363'],
+            ],
+            [
+                'id' => 21,
+                'category_name' => 'Health & Wellness',
+                'name' => 'Professional Blood Pressure Monitor',
+                'slug' => 'professional-blood-pressure-monitor',
+                'short_description' => 'Clinical-grade automatic blood pressure monitor with large display.',
+                'description' => 'Easy-to-use automatic blood pressure monitor with large LCD display. Tracks systolic, diastolic pressure, and pulse. Includes irregular heartbeat detection and memory for 2 users.',
+                'price' => 3599.00,
+                'compare_at_price' => null,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 160,
+                'images' => ['photo-1527612820672-5b56351f7346'],
+            ],
+            [
+                'id' => 22,
+                'category_name' => 'Health & Wellness',
+                'name' => 'Aromatherapy Essential Oil Set',
+                'slug' => 'aromatherapy-essential-oil-set',
+                'short_description' => '6 pure therapeutic essential oils with diffuser.',
+                'description' => 'Includes lavender, peppermint, eucalyptus, tea tree, lemon, and orange essential oils. 100% pure, natural, and cruelty-free. Comes with a sleek ultrasonic diffuser.',
+                'price' => 999.00,
+                'compare_at_price' => 1499.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => true,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 440,
+                'images' => ['photo-1608571423902-eed4a5ad8108'],
+            ],
+            [
+                'id' => 23,
+                'category_name' => 'Books',
+                'name' => 'The Art of Coding 2nd Edition',
+                'slug' => 'the-art-of-coding-2nd-edition',
+                'short_description' => 'Comprehensive guide to modern software development practices.',
+                'description' => 'The ultimate guide for software developers. Covers best practices, design patterns, clean code principles, and modern architecture. Includes real-world examples and case studies.',
+                'price' => 799.00,
+                'compare_at_price' => 999.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => true,
+                'is_active' => true,
+                'sold_count' => 310,
+                'images' => ['photo-1532012197267-da84d127e765'],
+            ],
+            [
+                'id' => 24,
+                'category_name' => 'Beauty',
+                'name' => 'Vitamin C Serum 30ml',
+                'slug' => 'vitamin-c-serum-30ml',
+                'short_description' => 'Brightening and anti-aging vitamin C serum with hyaluronic acid.',
+                'description' => 'Potent vitamin C serum with 20% pure vitamin C and hyaluronic acid. Reduces dark spots, fine lines, and promotes collagen production. Suitable for all skin types.',
+                'price' => 899.00,
+                'compare_at_price' => 1299.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => true,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 520,
+                'images' => ['photo-1598440947619-2c35fc9aa908'],
+            ],
+            [
+                'id' => 25,
+                'category_name' => 'Home & Living',
+                'name' => 'Smart LED Light Bulbs 4 Pack',
+                'slug' => 'smart-led-light-bulbs-4-pack',
+                'short_description' => 'WiFi-enabled smart LED bulbs with RGB and app control.',
+                'description' => 'Set of 4 smart LED bulbs compatible with Alexa and Google Home. Control brightness, color, and schedules through the app. Energy-efficient with 16M colors.',
+                'price' => 1499.00,
+                'compare_at_price' => 2499.00,
+                'stock_status' => 'in_stock',
+                'is_best_seller' => false,
+                'is_featured' => false,
+                'is_active' => true,
+                'sold_count' => 390,
+                'images' => ['photo-1563299796-17596ed6b017'],
+            ],
         ];
 
         $seededProducts = [];
@@ -408,7 +630,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 5. Seed Coupons
+        // 5. Seed Coupons - Added more coupons
         $coupons = [
             [
                 'code' => 'SAVE10',
@@ -443,13 +665,65 @@ class DatabaseSeeder extends Seeder
                 'used_count' => 12,
                 'is_active' => true,
             ],
+            [
+                'code' => 'SUMMER20',
+                'type' => 'percent',
+                'value' => 20,
+                'min_order_amount' => 2500,
+                'starts_at' => now()->subDays(5),
+                'expires_at' => now()->addDays(25),
+                'usage_limit' => 150,
+                'used_count' => 28,
+                'is_active' => true,
+            ],
+            [
+                'code' => 'FLASH15',
+                'type' => 'percent',
+                'value' => 15,
+                'min_order_amount' => 1000,
+                'starts_at' => now()->addDays(2),
+                'expires_at' => now()->addDays(5),
+                'usage_limit' => 50,
+                'used_count' => 0,
+                'is_active' => true,
+            ],
+            [
+                'code' => 'LOYALTY100',
+                'type' => 'fixed',
+                'value' => 100,
+                'min_order_amount' => 500,
+                'starts_at' => now()->subDays(10),
+                'expires_at' => now()->addDays(40),
+                'usage_limit' => 300,
+                'used_count' => 45,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($coupons as $coupon) {
             Coupon::create($coupon);
         }
 
-        // 6. Seed Specific Product Reviews (for Product 14)
+        // 6. Seed Reviews - More reviews for all products
+        $reviewComments = [
+            'Excellent product! Highly recommend.',
+            'Good quality for the price.',
+            'Fast delivery and great packaging.',
+            'Works as expected. Very satisfied.',
+            'Not as good as I expected but okay.',
+            'Absolutely love it! Will buy again.',
+            'Average product. Nothing special.',
+            'Outstanding quality and value.',
+            'The best purchase I\'ve made this year.',
+            'Good but could be improved.',
+            'Perfect for my needs. Highly satisfied.',
+            'Delivery was quick and product is great.',
+            'Excellent customer service too.',
+            'Value for money. Recommended.',
+            'Very happy with this purchase.',
+        ];
+
+        // Seed specific product reviews (for Product 14)
         $prod14 = Product::find(14);
         if ($prod14) {
             $reviews14 = [
@@ -471,10 +745,21 @@ class DatabaseSeeder extends Seeder
                     'comment' => 'Very comfortable for long use. Only wish the case was a bit smaller, but overall great value.',
                     'date' => now()->subDays(51),
                 ],
+                [
+                    'name' => 'Tamim I.',
+                    'rating' => 5,
+                    'comment' => 'Best headphones I\'ve ever owned! The bass is incredible and the battery lasts forever.',
+                    'date' => now()->subDays(28),
+                ],
+                [
+                    'name' => 'Nusrat F.',
+                    'rating' => 4,
+                    'comment' => 'Great sound quality but the noise cancellation could be a bit stronger.',
+                    'date' => now()->subDays(15),
+                ],
             ];
 
             foreach ($reviews14 as $revData) {
-                // Find or create a user for the reviewer
                 $revUser = User::factory()->create([
                     'name' => $revData['name'],
                     'email' => Str::slug($revData['name']).'@example.com',
@@ -493,26 +778,38 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Seed random reviews for other products
+        // Seed random reviews for other products (more reviews)
         foreach ($seededProducts as $prod) {
             if ($prod->id === 14) {
                 continue;
             }
-            // Create 1-3 reviews
-            $reviewerUsers = $users->random(rand(1, 3));
+            // Create 3-6 reviews per product
+            $numReviews = rand(3, 6);
+            $reviewerUsers = $users->random(min($numReviews, $users->count()));
+
+            $reviewIndex = 0;
             foreach ($reviewerUsers as $revUser) {
-                Review::factory()->create([
+                $rating = rand(3, 5);
+                $date = now()->subDays(rand(5, 60));
+
+                Review::create([
                     'product_id' => $prod->id,
                     'user_id' => $revUser->id,
-                    'order_id' => null,
+                    'rating' => $rating,
+                    'comment' => $reviewComments[array_rand($reviewComments)],
+                    'is_approved' => true,
+                    'approved_at' => $date,
+                    'created_at' => $date,
+                    'updated_at' => $date,
                 ]);
+                $reviewIndex++;
             }
         }
 
-        // 7. Seed Wishlists
+        // 7. Seed Wishlists - More wishlist items
         foreach ($allUsers as $usr) {
-            // Add 1-3 random products to wishlist
-            $wishProducts = collect($seededProducts)->random(rand(1, 3));
+            // Add 3-6 random products to wishlist
+            $wishProducts = collect($seededProducts)->random(rand(3, 6));
             foreach ($wishProducts as $p) {
                 Wishlist::create([
                     'user_id' => $usr->id,
@@ -527,8 +824,8 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $usr->id,
             ]);
 
-            // Add 1-2 random products to cart
-            $cartProducts = collect($seededProducts)->random(rand(1, 2));
+            // Add 2-4 random products to cart
+            $cartProducts = collect($seededProducts)->random(rand(2, 4));
             foreach ($cartProducts as $p) {
                 CartItem::create([
                     'cart_id' => $cart->id,
@@ -538,20 +835,58 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 9. Seed Orders & Order Items
+        // 9. Seed Orders & Order Items - More orders
+        $orderStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'completed', 'cancelled'];
+        $paymentMethods = ['cod', 'bkash', 'nagad', 'credit_card'];
+        $paymentStatuses = ['initiated', 'completed', 'failed', 'refunded'];
+        $districts = ['Dhaka', 'Chattogram', 'Khulna', 'Rajshahi', 'Sylhet', 'Barishal', 'Rangpur', 'Mymensingh'];
+        $areas = ['Mirpur', 'Gulshan', 'Banani', 'Dhanmondi', 'Mohammadpur', 'Uttara', 'Motijheel', 'Paltan', 'Jatrabari'];
+
+        $couponIds = Coupon::pluck('id')->toArray();
+
         foreach ($allUsers as $usr) {
-            // Create 1-2 orders per user
-            for ($o = 0; $o < rand(1, 2); $o++) {
-                $orderedProducts = collect($seededProducts)->random(rand(1, 3));
+            // Create 3-5 orders per user
+            for ($o = 0; $o < rand(3, 5); $o++) {
+                $numProducts = rand(1, 4);
+                $orderedProducts = collect($seededProducts)->random($numProducts);
                 $subtotal = 0;
 
+                $orderItems = [];
                 foreach ($orderedProducts as $p) {
-                    $subtotal += $p->price * rand(1, 2);
+                    $qty = rand(1, 3);
+                    $subtotal += $p->price * $qty;
+                    $orderItems[] = [
+                        'product' => $p,
+                        'quantity' => $qty,
+                    ];
                 }
 
-                $discount = rand(0, 1) ? 100 : 0;
-                $delivery = 60;
+                // Apply random coupon
+                $couponId = (rand(1, 3) < 2) ? $couponIds[array_rand($couponIds)] : null;
+                $discount = 0;
+                if ($couponId) {
+                    $coupon = Coupon::find($couponId);
+                    if ($coupon && $subtotal >= $coupon->min_order_amount) {
+                        if ($coupon->type === 'percent') {
+                            $discount = min($subtotal * ($coupon->value / 100), 1000);
+                        } else {
+                            $discount = min($coupon->value, $subtotal);
+                        }
+                    }
+                }
+
+                $delivery = (rand(1, 5) < 2) ? 0 : 60; // Sometimes free shipping
                 $total = $subtotal - $discount + $delivery;
+
+                $status = $orderStatuses[array_rand($orderStatuses)];
+                $placedAt = now()->subDays(rand(1, 45));
+
+                // Adjust status based on order age
+                if ($placedAt->diffInDays(now()) > 30) {
+                    $status = 'completed';
+                } elseif ($placedAt->diffInDays(now()) > 15) {
+                    $status = 'delivered';
+                }
 
                 $order = Order::create([
                     'order_number' => 'ORD-'.strtoupper(Str::random(10)),
@@ -559,53 +894,133 @@ class DatabaseSeeder extends Seeder
                     'customer_name' => $usr->name,
                     'phone' => '017'.rand(10000000, 99999999),
                     'email' => $usr->email,
-                    'district' => 'Dhaka',
-                    'area' => 'Mirpur',
-                    'address' => 'House 12, Road 5, Block B',
-                    'notes' => 'Deliver in afternoon',
-                    'coupon_id' => null,
+                    'district' => $districts[array_rand($districts)],
+                    'area' => $areas[array_rand($areas)],
+                    'address' => 'House '.rand(1, 99).', Road '.rand(1, 20).', Block '.chr(rand(65, 75)),
+                    'notes' => rand(1, 3) < 2 ? 'Deliver in afternoon' : 'Please call before delivery',
+                    'coupon_id' => $couponId,
                     'discount_amount' => $discount,
                     'subtotal' => $subtotal,
                     'delivery_charge' => $delivery,
                     'total' => $total,
-                    'payment_method' => 'cod',
-                    'payment_status' => 'pending',
-                    'status' => 'pending',
-                    'placed_at' => now()->subDays(rand(1, 15)),
+                    'payment_method' => $paymentMethods[array_rand($paymentMethods)],
+                    'payment_status' => $paymentStatuses[array_rand($paymentStatuses)],
+                    'status' => $status,
+                    'placed_at' => $placedAt,
                 ]);
 
                 // Create order items
-                foreach ($orderedProducts as $p) {
-                    $qty = rand(1, 2);
+                foreach ($orderItems as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'product_id' => $p->id,
-                        'product_name' => $p->name,
-                        'unit_price' => $p->price,
-                        'quantity' => $qty,
-                        'line_total' => $p->price * $qty,
+                        'product_id' => $item['product']->id,
+                        'product_name' => $item['product']->name,
+                        'unit_price' => $item['product']->price,
+                        'quantity' => $item['quantity'],
+                        'line_total' => $item['product']->price * $item['quantity'],
                     ]);
                 }
 
                 // Create payment
                 Payment::create([
                     'order_id' => $order->id,
-                    'gateway' => 'cod',
-                    'transaction_id' => null,
-                    'val_id' => null,
+                    'gateway' => $paymentMethods[array_rand($paymentMethods)],
+                    'transaction_id' => rand(1, 3) < 2 ? 'TXN_'.strtoupper(Str::random(16)) : null,
+                    'val_id' => rand(1, 3) < 2 ? 'VAL_'.strtoupper(Str::random(12)) : null,
                     'amount' => $total,
                     'currency' => 'BDT',
-                    'status' => 'initiated',
+                    'status' => $paymentStatuses[array_rand($paymentStatuses)],
                 ]);
 
-                // Create status history
-                OrderStatusHistory::create([
-                    'order_id' => $order->id,
-                    'status' => 'pending',
-                    'note' => 'Order placed successfully.',
-                    'changed_by' => $admin->id,
-                ]);
+                // Create order status history
+                $historyStatuses = ['pending'];
+                if ($status !== 'pending') {
+                    $historyStatuses[] = 'confirmed';
+                    if ($status === 'processing' || $status === 'shipped' || $status === 'delivered' || $status === 'completed') {
+                        $historyStatuses[] = 'processing';
+                    }
+                    if ($status === 'shipped' || $status === 'delivered' || $status === 'completed') {
+                        $historyStatuses[] = 'shipped';
+                    }
+                    if ($status === 'delivered' || $status === 'completed') {
+                        $historyStatuses[] = 'delivered';
+                    }
+                    if ($status === 'completed') {
+                        $historyStatuses[] = 'completed';
+                    }
+                }
+                if ($status === 'cancelled') {
+                    $historyStatuses[] = 'cancelled';
+                }
+
+                $historyNotes = [
+                    'Order placed successfully.',
+                    'Order confirmed by admin.',
+                    'Order is being processed.',
+                    'Order has been shipped.',
+                    'Order delivered successfully.',
+                    'Order marked as completed.',
+                    'Order cancelled by customer.',
+                ];
+
+                $historyIndex = 0;
+                foreach ($historyStatuses as $hStatus) {
+                    $note = '';
+                    switch ($hStatus) {
+                        case 'pending':
+                            $note = 'Order placed successfully.';
+                            break;
+                        case 'confirmed':
+                            $note = 'Order confirmed by admin.';
+                            break;
+                        case 'processing':
+                            $note = 'Order is being processed.';
+                            break;
+                        case 'shipped':
+                            $note = 'Order has been shipped.';
+                            break;
+                        case 'delivered':
+                            $note = 'Order delivered successfully.';
+                            break;
+                        case 'completed':
+                            $note = 'Order marked as completed.';
+                            break;
+                        case 'cancelled':
+                            $note = 'Order cancelled by customer.';
+                            break;
+                    }
+
+                    OrderStatusHistory::create([
+                        'order_id' => $order->id,
+                        'status' => $hStatus,
+                        'note' => $note,
+                        'changed_by' => rand(1, 3) < 2 ? $admin->id : $superAdmin->id,
+                        'created_at' => $placedAt->addHours($historyIndex * 2),
+                        'updated_at' => $placedAt->addHours($historyIndex * 2),
+                    ]);
+                    $historyIndex++;
+                }
             }
+        }
+
+        // Add some completed orders with delivery confirmation
+        $completedOrders = Order::where('status', 'completed')->get();
+        foreach ($completedOrders as $order) {
+            // Update payment status to completed
+            $payment = Payment::where('order_id', $order->id)->first();
+            if ($payment && $payment->status !== 'completed') {
+                $payment->update(['status' => 'completed']);
+            }
+
+            // Add delivery confirmation
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'status' => 'completed',
+                'note' => 'Order completed. Thank you for shopping with ShopEase!',
+                'changed_by' => $admin->id,
+                'created_at' => $order->placed_at->addDays(rand(3, 7)),
+                'updated_at' => $order->placed_at->addDays(rand(3, 7)),
+            ]);
         }
     }
 }
